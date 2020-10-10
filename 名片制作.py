@@ -1,0 +1,10 @@
+#邓亲优20
+print("----欢迎来到名片制作----")
+name = input("请输入您的姓名：")
+position = input("请输入您的职位：")
+addr = input("请输入您的地址:")
+print("您的名片制作如下图所示:")
+print()
+print("-"*32+"\n"+f"姓名:{name}"+"\n"+f"职位:{position}"+"\n"+f"地址:{addr}"+"\n"+"-"*32)
+print()
+print("----名片制作完成----")
