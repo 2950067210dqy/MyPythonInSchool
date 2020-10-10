@@ -37,6 +37,7 @@ def createSubGroup():
 
 
 
+    # frame1.pack()
     frame1.pack()
     pass
 top=None
