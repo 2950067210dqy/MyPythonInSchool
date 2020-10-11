@@ -1,8 +1,11 @@
 import re
 import tkinter
+import tkinter.messagebox
 import os
 from tkinter import ttk
-class curdWordsGui:
+from GuessWords.GuessWordsClass.CurdDataBaseAdptorByGuessWords import curdDataBaseAdptorByGuessWords
+from GuessWords.GuessWordsClass.pachong import pachong
+class curdWordsGui :
     top=None
     # 左边菜单栏的各个菜单名
     leftMenusStr=["单词导入","文章导入","网址导入","查看单词库"]
@@ -14,7 +17,16 @@ class curdWordsGui:
     isConnectDataBase=False
     # 控制是否使用文本存储
     isText=True
+    # 连接的数据库
+    db=None
+    # 连接的数据库的游标
+    cursor=None
+    # 展现单词库的表格
+    table=None
+    # 保存每个单词所在的表格index
+    table_tags=[]
     def __init__(self):
+        self.table_tags=[]
         self.createGUI()
 
     # 返回主界面函数
@@ -32,7 +44,7 @@ class curdWordsGui:
     def createGUI(self):
         self.top = tkinter.Tk()
         # 设置窗口的大小
-        self.top.wm_geometry("700x550+500+100")
+        self.top.wm_geometry("800x550+500+100")
         # 设置不允许改变窗口的高宽
         self.top.wm_resizable(False, False)
         # 设置窗口标题
@@ -45,13 +57,16 @@ class curdWordsGui:
         frame = tkinter.Frame(self.top).pack(fill="both")
         topMenuFrame=tkinter.Frame(frame)
         # 标题
-        tkinter.Label(topMenuFrame,font=('楷体',22,'bold'),bd=5,text="单词操作",relief=tkinter.RAISED).pack(fill="x")
-        tkinter.Button(topMenuFrame,text="返回",command=self.backMainGui).pack(side="right")
+        # tkinter.Label(topMenuFrame,font=('楷体',22,'bold'),bd=5,text="单词操作",relief=tkinter.RAISED).pack(fill="x")
+        tkinter.Button(topMenuFrame,text="返回",command=self.backMainGui,font=('楷体',22,'bold'),bg="black",fg="white").pack(fill="x")
         topMenuFrame.pack(fill="x",side=tkinter.TOP)
 
         bottomMenuFrame = tkinter.Frame(frame)
         self.bottomMenvRBV = tkinter.IntVar()
-        self.bottomMenvRBV.set(1)
+        if self.isText:
+            self.bottomMenvRBV.set(1)
+        if self.isConnectDataBase:
+            self.bottomMenvRBV.set(2)
         tkinter.Radiobutton(bottomMenuFrame, text="使用文本文件存储", variable=self.bottomMenvRBV, value=1, font=("宋体", 10),
                             command=self.changeIsText).pack(side="left")
         tkinter.Radiobutton(bottomMenuFrame, text="使用数据库连接", variable=self.bottomMenvRBV, value=2, font=("宋体", 10),
@@ -63,33 +78,17 @@ class curdWordsGui:
 
 
 
-        # # 左边菜单项
-        # leftMenuLB=tkinter.Listbox(frame,width=10,relief=tkinter.RAISED,bd=3,font=('黑体',15,'italic'),
-        #                         selectbackground="black",selectborderwidth=10)
-        # # 将数据添加到listBox中
-        # self.insertIntoListBox(leftMenuLB, self.leftMenusStr)
-        # # 默认选择第一项
-        # leftMenuLB.selection_set(0)
-        # # 菜单项添加监听事件
-        # # //为什么不用鼠标单击事件<Button-1> 因为鼠标单击之后listbox的select不是立即发生的，
-        # #   所以会造成点击之后，listbox的select的下标还停留在点击之前的select的下标
-        # leftMenuLB.bind("<<ListboxSelect>>",self.bindHandlerAdaptor(fun=self.listBoxOnSelect,listbox=leftMenuLB))
-        # leftMenuLB.pack(side=tkinter.LEFT,fill="y")
-        #
-        # rightFrame=tkinter.Frame(frame)
-        # tkinter.Label(rightFrame,font=('黑体',13),text="请输入您要导入的单词,用空格隔开").pack()
-        # wordsText=tkinter.Text(rightFrame,width=40,height=15,font=('楷体',17),selectbackground="red")
-        # wordsText.pack()
-        # buttonFrame=tkinter.Frame(rightFrame)
-        # tkinter.Button(buttonFrame,text="确定导入",command=self.commandHandlerAdapator(fun=self.importToWords,Text=wordsText)).pack(side="left",padx=20)
-        # tkinter.Button(buttonFrame, text="清空单词",command=self.commandHandlerAdapator(fun=self.cleanText,Text=wordsText)).pack(side="right")
-        # buttonFrame.pack()
-        # rightFrame.pack()
-        tab = ttk.Notebook(frame)
 
+        tab = ttk.Notebook(frame)
+        #第一个菜单页面
         rightFrame1 = tkinter.Frame(tab)
         tkinter.Label(rightFrame1, font=('黑体', 13), text="请输入您要导入的单词,用空格隔开").pack()
-        wordsText = tkinter.Text(rightFrame1, width=40, height=15, font=('楷体', 17), selectbackground="red")
+        wordsText = tkinter.Text(rightFrame1, width=50, height=15, font=('楷体', 17), selectbackground="red")
+        wordsTextSb=tkinter.Scrollbar()
+        wordsTextSb.pack(side=tkinter.RIGHT, fill=tkinter.Y)
+        # 两个控件关联
+        wordsTextSb.config(command=wordsText.yview)
+        wordsText.config(yscrollcommand=wordsTextSb.set)
         wordsText.pack()
         buttonFrame = tkinter.Frame(rightFrame1)
         tkinter.Button(buttonFrame, text="确定导入",
@@ -100,35 +99,212 @@ class curdWordsGui:
         buttonFrame.pack()
         tab1=tab.add(rightFrame1,text=self.leftMenusStr[0])
 
+
+        # 第二个菜单页面
         rightFrame2 = tkinter.Frame(tab)
-
+        tkinter.Label(rightFrame2, font=('黑体', 13), text="请输入或粘贴您要导入的文章").pack()
+        wordsText2 = tkinter.Text(rightFrame2, width=50, height=15, font=('楷体', 17), selectbackground="red")
+        # 两个控件关联
+        wordsTextSb.config(command=wordsText2.yview)
+        wordsText2.config(yscrollcommand=wordsTextSb.set)
+        wordsText2.pack()
+        buttonFrame2 = tkinter.Frame(rightFrame2)
+        tkinter.Button(buttonFrame2, text="确定导入",
+                       command=self.commandHandlerAdapator(fun=self.importToWords, Text=wordsText2,type="essay")).pack(side="left",
+                                                                                                         padx=20)
+        tkinter.Button(buttonFrame2, text="清空文章",
+                       command=self.commandHandlerAdapator(fun=self.cleanText, Text=wordsText2)).pack(side="right")
+        buttonFrame2.pack()
         tab2 = tab.add(rightFrame2, text=self.leftMenusStr[1])
-        tab.pack(side=tkinter.TOP)
 
 
 
+        # 第三个菜单页面
+        rightFrame3 = tkinter.Frame(tab)
+        tkinter.Label(rightFrame3, font=('黑体', 13), text="请输入或粘贴您要导入单词的网址\ntips:多个网址用半角空格隔开").pack()
+        wordsText3 = tkinter.Text(rightFrame3, width=50, height=15, font=('楷体', 17), selectbackground="red")
+        # 两个控件关联
+        wordsTextSb.config(command=wordsText3.yview)
+        wordsText3.config(yscrollcommand=wordsTextSb.set)
+        wordsText3.pack()
+        buttonFrame3 = tkinter.Frame(rightFrame3)
+        tkinter.Button(buttonFrame3, text="确定导入",
+                       command=self.commandHandlerAdapator(fun=self.importToWords, Text=wordsText3, type="url")).pack(
+            side="left",
+            padx=20)
+        tkinter.Button(buttonFrame3, text="清空网址",
+                       command=self.commandHandlerAdapator(fun=self.cleanText, Text=wordsText3)).pack(
+            side="right")
+        buttonFrame3.pack()
+        tab3 = tab.add(rightFrame3, text=self.leftMenusStr[2])
 
+
+        # 四个菜单页面
+        rightFrame4 = tkinter.Frame(tab)
+        table_title = ["序号", "单词", "翻译", "保存时间", "删除"]
+        table_title_id = [0, 1, 2, 3, 4]
+        self.table=ttk.Treeview(rightFrame4,columns=table_title_id,show="headings",height=20)
+        # 两个控件关联
+        wordsTextSb.config(command=self.table.yview)
+        self.table.config(yscrollcommand=wordsTextSb.set)
+        for i in table_title_id:
+            self.table.column(i,width=150,anchor='center')
+            # 表格标题展现
+            self.table.heading(i, text=table_title[i])
+        #读取数据并放在上面
+        self.tableShowWords()
+        self.table.pack()
+        delteWordsBT = tkinter.Button(rightFrame4, text="删除单词表",
+                                      command=self.commandHandlerAdapator(self.deleteAllWords))
+        delteWordsBT.pack(fill="x")
+        tab4 = tab.add(rightFrame4, text=self.leftMenusStr[3])
+        tab.pack(side=tkinter.TOP,fill="x")
+        tab.select(tab1)
+
+    # 删除单词表操作
+    def deleteAllWords(self):
+            if self.isText:
+                self.deleteWordsByTxt()
+            if self.isConnectDataBase:
+                self.deleteWordsByDB()
+            self.tableHideWords()
+    # 删除文本文件存储的单词表
+    def deleteWordsByTxt(self):
+        with open(os.getcwd() + '\\TXT\\words.txt', 'w') as fp:
+            fp.write("")
+        fp.close()
+        self.InsertTipMessage("文本存储单词表删除成功")
+    # 删除数据库文件的单词表
+    def deleteWordsByDB(self):
+        curdDB=curdDataBaseAdptorByGuessWords()
+        try:
+            self.InsertTipMessage("数据库单词表删除成功,共删除单词"+str(curdDB.deleteAll(self.cursor))+"个")
+        except Exception:
+            curdDB.rollback(self.db)
+        curdDB.commit(self.db)
+    # 读取单词并显示在表格上
+    def tableShowWords(self):
+        if self.isText:
+            words=self.getWordsByTXT()
+            for i in words :
+                # 向表格插入数据并保存index
+                self.table_tags.append(self.table.insert("","end",values=("",i,"","","")))
+        if self.isConnectDataBase:
+            words=self.getWordsByDB()
+            # print(words)
+            for i in words:
+                self.table_tags.append(self.table.insert("", "end", values=(i[0], i[1], i[2], i[3], "")))
+    # 将表格的显示所有单词删除
+    def tableHideWords(self):
+        for i in range(0,len(self.table_tags)):
+            self.table.delete(self.table_tags[i])
+        self.table_tags=[]
     # 将单词导入词库函数操作
-    def importToWords(self,Text):
+    def importToWords(self,Text,type=""):
         # 获取文本
         strs=Text.get("1.0",tkinter.END)
         # 清空输入框
         self.cleanText(Text)
+        # 将两端换行符去除
+        strs=strs.strip("\n")
+        # 将两端空格去除
+        strs=strs.strip()
         # 拆分
         strlist=strs.split(" ")
-        # 过滤
-        result = filter(lambda x:re.findall(r'[A-Za-z]',x), strlist)
 
-
+        # 判断输入框输入的是不是url
+        if type=="url":
+            # 过滤掉不是url的字符串
+            result = filter(lambda x:re.findall(r'^([hH][tT]{2}[pP]://|[hH][tT]{2}[pP][sS]://)(([A-Za-z0-9-~]+).)+([A-Za-z0-9-~\\/])+$',x),strlist)
+            result=pachong(urlList=result).start()
+            # 过滤 过滤规则为只要英文
+            result = filter(lambda x: re.findall(r'[A-Za-z]', x), result)
+        else:
+            # 过滤 过滤规则为只要英文
+            result = filter(lambda x:re.findall(r'[A-Za-z]',x), strlist)
+        # 过滤 过滤输入重复的 过滤其他字符 上面的过滤是粗过滤
+        result = self.fiterSS(result)
+        # 如果存储着相同的单词去除
+        result = self.fiterSaveSS(result)
+        # 去除单个字母组成的单词
+        result = filter(lambda x:len(x)>1,result)
+        #根据选择的存储方式存储
         if self.isText:
-            with open(os.getcwd()+'\\TXT\\words.txt', 'a+') as fp:
-                for item in result:
-                    print(item+"1")
-                    fp.write(item + '\n')
-            fp.close()
-            self.InsertTipMessage("添加成功")
+            self.importToTXT(fiter=result)
         if self.isConnectDataBase:
-            pass
+            self.importToDataBase(fiter=result)
+    # 从文本取出单词 列表形式存储
+    def getWordsByTXT(self):
+        with open(os.getcwd() + '\\TXT\\words.txt', 'r') as fp:
+            # 读取所有行
+            words = fp.readlines()
+            words = self.StrSplitOfList(oldList=words, string="\n")
+        fp.close()
+        return words
+    # 从数据库取出单词 列表形式存储
+    def getWordsByDB(self):
+        curdDB = curdDataBaseAdptorByGuessWords()
+        try:
+            curdDB.selectAll(cursor=self.cursor)
+            wordsByDB=self.cursor.fetchall()
+        except Exception:
+            curdDB.rollback(self.db)
+        curdDB.commit(self.db)
+        return wordsByDB
+
+    #  将列表中的字符串切片
+    def StrSplitOfList(self,oldList, string):
+        newList = []
+        for i in oldList:
+            newList.append(str(i).split(string)[0])
+        return newList
+    # 过滤存储存在的单词
+    def fiterSaveSS(self,result=None):
+        if self.isText:
+            saveWordsList=self.getWordsByTXT()
+            return filter(lambda x:x not in saveWordsList,result)
+        if self.isConnectDataBase:
+            saveWordsTuple2=self.getWordsByDB()
+            newWordsList=[]
+            for i in saveWordsTuple2:
+                newWordsList.append(i[1])
+            print(newWordsList)
+            return filter(lambda x:x not in newWordsList,result)
+    # 过滤重复单词功能
+    def fiterSS(self,result=None):
+        newResult=[]
+        for item in result:
+            item=item.strip("\n")
+            item=item.strip()
+            item=re.sub(r"[^a-zA-Z]","",item)
+            if item not in newResult :
+                newResult.append(item)
+        return newResult
+    #将单词导入到文本文件函数
+    def importToTXT(self,fiter):
+        with open(os.getcwd() + '\\TXT\\words.txt', 'a+') as fp:
+            i=0
+            for item in fiter:
+                fp.write(item + '\n')
+                i=i+1
+        fp.close()
+        self.InsertTipMessage("添加成功,共添加"+str(i)+"个单词")
+    #将单词导入到数据库函数
+    def importToDataBase(self,fiter):
+
+        curdDB=curdDataBaseAdptorByGuessWords()
+        curdDB.createTable(self.cursor)
+        try:
+            i=0
+            for item in fiter:
+                self.InsertTipMessage(curdDB.insert(self.cursor,item))
+                i = i + 1
+            self.InsertTipMessage("添加成功,共添加"+str(i)+"个单词")
+        except Exception:
+            self.InsertTipMessage("添加失败")
+            curdDB.rollback(self.db)
+        curdDB.commit(self.db)
+
     # 清空输入栏
     def cleanText(self,Text):
         Text.delete("1.0",tkinter.END)
@@ -137,46 +313,46 @@ class curdWordsGui:
     def changeIsText(self):
         self.isConnectDataBase = False
         self.isText=True
-        self.InsertTipMessage("isConnectDataBase:" + str(self.isConnectDataBase) + "\nisText:" + str(self.isText))
+        curdDB = curdDataBaseAdptorByGuessWords()
+        #关闭数据库
+        if self.db:
+            try:
+                curdDB.close(self.db)
+            except Exception:
+                pass
+        # 更改表格显示数据的来源
+        self.tableHideWords()
+        self.tableShowWords()
+        self.InsertTipMessage("切换文本存储成功")
     # 底部菜单的radiobutton的 使使用数据库连接 监听函数
     def changeIsConnectDataBase(self):
         self.isText=False
         self.isConnectDataBase=True
-        self.InsertTipMessage("isConnectDataBase:" + str(self.isConnectDataBase) + "\nisText:" + str(self.isText))
-
+        #连接数据库
+        curdDB = curdDataBaseAdptorByGuessWords()
+        self.db = curdDB.connectDataBase()
+        self.cursor = curdDB.getCursor(self.db)
+        # 更改表格显示数据的来源
+        self.tableHideWords()
+        self.tableShowWords()
+        self.InsertTipMessage("切换数据库成功")
     # bind方法的监听函数的中间函数（为了传递其他参数）
     def bindHandlerAdaptor(self, fun, **eles):
         return lambda event, eles=eles: fun(event, **eles)
     # command的监听函数的中间函数（为了传递其他参数）
     def commandHandlerAdapator(self, fun, **eles):
         return lambda eles=eles: fun(**eles)
-    # #  listBox的select发生改变的监听函数
-    # def listBoxOnSelect(self,event,listbox):
-    #     # 根据选中的第几项菜单显示什么功能
-    #     try:
-    #         index=int(listbox.curselection()[0])
-    #         if index==0:
-    #             self.InsertTipMessage(index)
-    #             pass
-    #         elif index==1:
-    #             self.InsertTipMessage(index)
-    #             pass
-    #         elif index==2:
-    #             self.InsertTipMessage(index)
-    #             pass
-    #         elif index==3:
-    #             self.InsertTipMessage(index)
-    #             pass
-    #     except Exception:
-    #         pass
-
-    #  将数据插入到ListBox中
-    def insertIntoListBox(self,listBox,strs=[]):
-        for i in strs:
-            listBox.insert("end",i)
     #销毁GUI
     def destory(self):
         # 关闭当前窗口
+        if self.db:
+            curdDB = curdDataBaseAdptorByGuessWords()
+            try:
+                curdDB.close(self.db)
+            except Exception:
+                pass
+        self.table_tags=[]
+        print(self.table_tags)
         self.top.destroy()
     # 添加提示信息
     def InsertTipMessage(self,msg):

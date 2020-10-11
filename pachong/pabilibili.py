@@ -22,7 +22,6 @@ def allorderby(link,table,counter,db):
     print(21)
     db = pymysql.connect(host="47.94.164.171", port=3306, user="root", password="2591215997as", database=f'{db}', charset='utf8')
     cursor = db.cursor()  # 数据游标
-
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36"}
     r = requests.get(link, headers=headers)
@@ -105,6 +104,7 @@ def allorderby(link,table,counter,db):
 def allfanju(link,table,counter,db):
     db = pymysql.connect(host="47.94.164.171", port=3306, user="root", password="2591215997as", database=f'{db}', charset='utf8')
     cursor = db.cursor()  # 数据游标
+
 
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36"}

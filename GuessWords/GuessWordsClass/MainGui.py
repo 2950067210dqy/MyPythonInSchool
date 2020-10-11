@@ -1,5 +1,5 @@
 import tkinter
-
+import tkinter.messagebox
 class mainGui:
     root=None
     def __init__(self):
@@ -12,13 +12,26 @@ class mainGui:
         from GuessWords.GuessWordsClass.CurdWordsGui import curdWordsGui
         curdWordsGui()
 
+
     # 猜单词游戏按钮关联函数
     def guessWords(self):
-        # 销毁当前GUI
-        self.destory()
-        # 创建猜单词游戏GUI
         from GuessWords.GuessWordsClass.GuessWordsGui import guessWordsGui
-        guessWordsGui()
+
+        # 弹框
+        if not tkinter.messagebox.askquestion("选择存储方式", "请问您是否使用文本存储的单词表来进行游戏？\n（选择“是”使用文本，选择“否”使用数据库）"):
+            # 销毁当前GUI
+            self.destory()
+            # 创建猜单词游戏GUI
+            guessWordsGui()
+        else:
+            # 销毁当前GUI
+            self.destory()
+            # 创建猜单词游戏GUI
+            guessWordsGui()
+
+
+
+
 
     # 创建python GUI
     def createGUI(self):
