@@ -18,16 +18,18 @@ class mainGui:
         from GuessWords.GuessWordsClass.GuessWordsGui import guessWordsGui
 
         # 弹框
-        if not tkinter.messagebox.askquestion("选择存储方式", "请问您是否使用文本存储的单词表来进行游戏？\n（选择“是”使用文本，选择“否”使用数据库）"):
+        if  tkinter.messagebox.askquestion("选择存储方式", "请问您是否使用文本存储的单词表来进行游戏？\n（选择“是”使用文本，选择“否”使用数据库）")=="yes":
             # 销毁当前GUI
             self.destory()
             # 创建猜单词游戏GUI
-            guessWordsGui()
+            guessWordsGui(bottomMenvRBVNum=1)
+
         else:
             # 销毁当前GUI
             self.destory()
             # 创建猜单词游戏GUI
-            guessWordsGui()
+            guessWordsGui(bottomMenvRBVNum=2)
+
 
 
 

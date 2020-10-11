@@ -33,7 +33,7 @@ class curdWordsGui :
     def backMainGui(self):
         self.destory()
         from GuessWords.GuessWordsClass.MainGui import mainGui
-        GUI=mainGui()
+        mainGui()
 
     # 猜单词游戏按钮关联函数
     def guessWords(self):
@@ -68,9 +68,9 @@ class curdWordsGui :
         if self.isConnectDataBase:
             self.bottomMenvRBV.set(2)
         tkinter.Radiobutton(bottomMenuFrame, text="使用文本文件存储", variable=self.bottomMenvRBV, value=1, font=("宋体", 10),
-                            command=self.changeIsText).pack(side="left")
+                            command=self.changeIsText,indicatoron=0).pack(side="left")
         tkinter.Radiobutton(bottomMenuFrame, text="使用数据库连接", variable=self.bottomMenvRBV, value=2, font=("宋体", 10),
-                            command=self.changeIsConnectDataBase).pack(side="left")
+                            command=self.changeIsConnectDataBase,indicatoron=0).pack(side="left")
         self.tipMessageStr = tkinter.StringVar()
         tkinter.Label(bottomMenuFrame, textvariable=self.tipMessageStr, font=('楷体', 10, "bold"), fg="red").pack(
             side="right")
@@ -241,7 +241,7 @@ class curdWordsGui :
             words = self.StrSplitOfList(oldList=words, string="\n")
         fp.close()
         return words
-    # 从数据库取出单词 列表形式存储
+    # 从数据库取出单词 二维元组存储
     def getWordsByDB(self):
         curdDB = curdDataBaseAdptorByGuessWords()
         try:
