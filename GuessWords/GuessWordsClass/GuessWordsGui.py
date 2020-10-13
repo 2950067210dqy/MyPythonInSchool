@@ -47,8 +47,21 @@ class guessWordsGui:
         self.words=[]
         self.createSaveBaseFlag(bottomMenvRBVNum)
         self.getWords()
+        # 判断单词库是否是空的
+        self.judgeWordsisNull()
         self.allpacks=int(len(self.words))//self.packOfNums
         self.createGUI(bottomMenvRBVNum)
+
+    # 判断单词库是否是空的
+    def judgeWordsisNull(self):
+        if self.isText and int(len(self.words))==0:
+            tkinter.messagebox.askquestion("注意", "文本存储的题库没有题目！导入单词之后再来猜单词吧")
+            from GuessWords.GuessWordsClass.MainGui import mainGui
+            mainGui()
+        if self.isConnectDataBase and int(len(self.words)) == 0:
+            tkinter.messagebox.askquestion("注意", "数据库存储的题库没有题目！导入单词之后再来猜单词吧")
+            from GuessWords.GuessWordsClass.MainGui import mainGui
+            mainGui()
 
     # 根据传过来的值来确定存储对象
     def createSaveBaseFlag(self,bottomMenvRBVNum):
@@ -111,22 +124,22 @@ class guessWordsGui:
 
 
         centerFrame=tkinter.Frame(frame)
-
         LuanXuFrame=tkinter.Frame(centerFrame)
         tkinter.Label(LuanXuFrame,text="乱序的单词:",widt=15,font=('黑体',15)).pack(side="left")
-        tkinter.Label(LuanXuFrame,textvariable=self.sdrow,widt=15,font=('黑体',25),bg="black",fg="white").pack(side="left")
+        LuanXulb=tkinter.Label(LuanXuFrame,textvariable=self.sdrow,widt=25                                                                                                         ,font=('黑体',25),bg="black",fg="white")
+        LuanXulb.pack(side="left")
         LuanXuFrame.pack(fill="x")
 
         entryFrame=tkinter.Frame(centerFrame)
         tkinter.Label(entryFrame,text="请输入单词:",widt=15,font=('黑体',15)).pack(side="left")
-        self.entry=tkinter.Entry(entryFrame,widt=15,font=('黑体',25))
+        self.entry=tkinter.Entry(entryFrame,widt=25,font=('黑体',25))
         self.entry.pack(side="left")
         entryFrame.pack(fill="x")
 
         buttonFrame=tkinter.Frame(centerFrame)
         self.okBt=tkinter.Button(buttonFrame,text="确定答案",widt=15,font=('黑体',15),command=self.commandHandlerAdapator(self.OKAnswer))
         self.okBt.pack(side="left",padx=10)
-        self.nextBt = tkinter.Button(buttonFrame, text="下一题", widt=15, font=('黑体', 15),command=self.commandHandlerAdapator(self.nextPack),state="disabled")
+        self.nextBt = tkinter.Button(buttonFrame, text="下一题", widt=15, font=('黑体', 15),command=self.commandHandlerAdapator(self.nextPack))
         self.nextBt.pack(side="left",padx=10)
         self.tipBt=tkinter.Button(buttonFrame,text="提示",widt=15,font=('黑体',15),command=self.commandHandlerAdapator(self.tipHandle),state="disabled")
         self.tipBt.pack(side="left",padx=10)
@@ -138,26 +151,26 @@ class guessWordsGui:
         if self.wordNum==str(self.entry.get()):
             self.InsertTipMessage("恭喜你猜对了")
             self.okBt['state']='disabled'
-            self.nextBt['state']='normal'
         else:
             self.InsertTipMessage("猜错了呢，继续加油！")
             self.tipBt['state']='normal'
     # 下一题按钮事件
     def nextPack(self):
-        if self.packNum==self.allpacks:
+        if self.packNum>=self.allpacks:
             tkinter.messagebox.askquestion("通关", "题库没题目了，您真厉害！\n导入单词之后再来猜单词吧，您已经猜了" + str(len(self.words))+"个单词")
-        self.num=self.num+1
-        if self.num>self.packOfNums-1:
-            self.num=0
-            self.packNum=self.packNum+1
-            self.pack.set(str(self.packNum))
-        self.sdrowNum = self.LuanXu(self.words[(self.packNum - 1) * self.packOfNums :self.packNum * self.packOfNums][self.num])
-        self.sdrow.set(self.sdrowNum)
-        self.wordNum = self.words[(self.packNum - 1) * self.packOfNums :self.packNum * self.packOfNums][self.num]
-        self.word.set(self.wordNum)
-        self.okBt['state'] = 'normal'
-        self.nextBt['state'] = 'disabled'
-        self.tipBt['state']='disabled'
+            self.backMainGui()
+        else:
+            self.num=self.num+1
+            if self.num>self.packOfNums-1:
+                self.num=0
+                self.packNum=self.packNum+1
+                self.pack.set(str(self.packNum))
+            self.sdrowNum = self.LuanXu(self.words[(self.packNum - 1) * self.packOfNums :self.packNum * self.packOfNums][self.num])
+            self.sdrow.set(self.sdrowNum)
+            self.wordNum = self.words[(self.packNum - 1) * self.packOfNums :self.packNum * self.packOfNums][self.num]
+            self.word.set(self.wordNum)
+            self.okBt['state'] = 'normal'
+            self.tipBt['state']='disabled'
     # 提示按钮事件
     def tipHandle(self):
         tkinter.messagebox.askquestion("提示","单词的正确排序为:"+self.wordNum)

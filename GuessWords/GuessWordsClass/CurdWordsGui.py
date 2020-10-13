@@ -57,8 +57,7 @@ class curdWordsGui :
         frame = tkinter.Frame(self.top).pack(fill="both")
         topMenuFrame=tkinter.Frame(frame)
         # 标题
-        # tkinter.Label(topMenuFrame,font=('楷体',22,'bold'),bd=5,text="单词操作",relief=tkinter.RAISED).pack(fill="x")
-        tkinter.Button(topMenuFrame,text="返回",command=self.backMainGui,font=('楷体',22,'bold'),bg="black",fg="white").pack(fill="x")
+        tkinter.Label(topMenuFrame,font=('楷体',22,'bold'),bd=5,text="单词操作",relief=tkinter.RAISED).pack(fill="x")
         topMenuFrame.pack(fill="x",side=tkinter.TOP)
 
         bottomMenuFrame = tkinter.Frame(frame)
@@ -71,6 +70,7 @@ class curdWordsGui :
                             command=self.changeIsText,indicatoron=0).pack(side="left")
         tkinter.Radiobutton(bottomMenuFrame, text="使用数据库连接", variable=self.bottomMenvRBV, value=2, font=("宋体", 10),
                             command=self.changeIsConnectDataBase,indicatoron=0).pack(side="left")
+        tkinter.Button(bottomMenuFrame,text="返回",command=self.backMainGui,font=('宋体',10)).pack(side="left")
         self.tipMessageStr = tkinter.StringVar()
         tkinter.Label(bottomMenuFrame, textvariable=self.tipMessageStr, font=('楷体', 10, "bold"), fg="red").pack(
             side="right")
@@ -83,7 +83,7 @@ class curdWordsGui :
         #第一个菜单页面
         rightFrame1 = tkinter.Frame(tab)
         tkinter.Label(rightFrame1, font=('黑体', 13), text="请输入您要导入的单词,用空格隔开").pack()
-        wordsText = tkinter.Text(rightFrame1, width=50, height=15, font=('楷体', 17), selectbackground="red")
+        wordsText = tkinter.Text(rightFrame1, width=64, height=17, font=('楷体', 17), selectbackground="red")
         wordsTextSb=tkinter.Scrollbar()
         wordsTextSb.pack(side=tkinter.RIGHT, fill=tkinter.Y)
         # 两个控件关联
@@ -103,7 +103,7 @@ class curdWordsGui :
         # 第二个菜单页面
         rightFrame2 = tkinter.Frame(tab)
         tkinter.Label(rightFrame2, font=('黑体', 13), text="请输入或粘贴您要导入的文章").pack()
-        wordsText2 = tkinter.Text(rightFrame2, width=50, height=15, font=('楷体', 17), selectbackground="red")
+        wordsText2 = tkinter.Text(rightFrame2, width=64, height=17, font=('楷体', 17), selectbackground="red")
         # 两个控件关联
         wordsTextSb.config(command=wordsText2.yview)
         wordsText2.config(yscrollcommand=wordsTextSb.set)
@@ -122,7 +122,7 @@ class curdWordsGui :
         # 第三个菜单页面
         rightFrame3 = tkinter.Frame(tab)
         tkinter.Label(rightFrame3, font=('黑体', 13), text="请输入或粘贴您要导入单词的网址\ntips:多个网址用半角空格隔开").pack()
-        wordsText3 = tkinter.Text(rightFrame3, width=50, height=15, font=('楷体', 17), selectbackground="red")
+        wordsText3 = tkinter.Text(rightFrame3, width=64, height=16, font=('楷体', 17), selectbackground="red")
         # 两个控件关联
         wordsTextSb.config(command=wordsText3.yview)
         wordsText3.config(yscrollcommand=wordsTextSb.set)

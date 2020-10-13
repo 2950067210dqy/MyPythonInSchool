@@ -62,27 +62,27 @@ else:
 
 print(WORDS)
 
-# #开始游戏
-# print("""欢迎参加猜单词游戏
-# 把字母组合成一个正确的单词.""")
-# iscontinue="y"
-# while iscontinue=="y" or iscontinue=="Y":
-#     #从序列中随机挑出一个单词
-#     word=random.choice(WORDS)
-#     #一个用于判断玩家是否猜对的变量
-#     correct=word
-#     #创建乱序后单词
-#     jumble=LuanXu(word)
-#     print("乱序后单词:",jumble)
-#     guess=input("请你猜:")
-#     if guess==correct:
-#         print ("真棒，你猜对了！")
-#     while guess!=correct and guess!="":
-#         # 跳过该单词
-#         if guess=="c" or guess=="C":
-#             break
-#         else:
-#             print("对不起不正确.")
-#             guess=input("继续猜('c'键跳过该单词):")
-#     iscontinue=input("\n是否继续猜单词（Y/N）:")
+#开始游戏
+print("""欢迎参加猜单词游戏
+把字母组合成一个正确的单词.""")
+iscontinue="y"
+while iscontinue=="y" or iscontinue=="Y":
+    #从序列中随机挑出一个单词
+    word=random.choice(WORDS)
+    #一个用于判断玩家是否猜对的变量
+    correct=word
+    #创建乱序后单词
+    jumble=LuanXu(word)
+    print("乱序后单词:",jumble)
+    guess=input("请你猜:")
+    if guess==correct:
+        print ("真棒，你猜对了！")
+    while guess!=correct and guess!="":
+        # 跳过该单词
+        if guess=="c" or guess=="C":
+            break
+        else:
+            print("对不起不正确.")
+            guess=input("继续猜('c'键跳过该单词):")
+    iscontinue=input("\n是否继续猜单词（Y/N）:")
 

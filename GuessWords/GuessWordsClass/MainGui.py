@@ -50,9 +50,9 @@ class mainGui:
     #   创建GUI当中的组件
     def createSubGroup(self):
         frame = tkinter.Frame(self.root).pack(fill="both")
-        tkinter.Button(frame, text="词库操作", width=25, height=7, bd=3, bg="#333", fg="white",
+        tkinter.Button(frame, text="<——词库操作——>", width=25, height=7, bd=3, bg="#333", fg="white",
                        activebackground="white", activeforeground="#333", command=self.curdWords).pack(side="left", padx=25)
-        tkinter.Button(frame, text="猜单词游戏", width=25, height=7, bd=3, bg="#333", fg="white",
+        tkinter.Button(frame, text="<——猜单词游戏——>", width=25, height=7, bd=3, bg="#333", fg="white",
                        activebackground="white", activeforeground="#333", command=self.guessWords).pack(side="right",
                                                                                                    padx=25)
     #销毁GUI
