@@ -4,7 +4,10 @@ class curdDataBase:
         pass
     # 连接数据库
     def connect(self,config):
-        return pymysql.connect(host=config["host"],port=config["port"],user=config["user"],password=config["password"],database=config["database"],charset=config["charset"])
+        try:
+            return pymysql.connect(host=config["host"],port=config["port"],user=config["user"],password=config["password"],database=config["database"],charset=config["charset"])
+        except:
+            return "数据库连接失败"
     # 获得游标
     def getCursor(self,db):
         return db.cursor()

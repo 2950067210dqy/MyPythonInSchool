@@ -31,9 +31,9 @@ def getDriver(link):
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-gpu')
     chrome_options.add_argument("window-size=1024,768")
-    driver = webdriver.Chrome("chromedriver",chrome_options=chrome_options)
+    #driver = webdriver.Chrome("chromedriver",chrome_options=chrome_options)
     #打开浏览器
-    # driver = webdriver.Chrome(r'chromedriver.exe')
+    driver = webdriver.Chrome(r'chromedriver.exe')
 
     driver.get(link)
     # driver.find_element_by_id('fm-login-id').send_keys('15970674596')

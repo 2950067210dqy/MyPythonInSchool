@@ -300,7 +300,8 @@ class curdWordsGui :
                 self.InsertTipMessage(curdDB.insert(self.cursor,item))
                 i = i + 1
             self.InsertTipMessage("添加成功,共添加"+str(i)+"个单词")
-        except Exception:
+        except Exception :
+
             self.InsertTipMessage("添加失败")
             curdDB.rollback(self.db)
         curdDB.commit(self.db)
@@ -330,7 +331,11 @@ class curdWordsGui :
         self.isConnectDataBase=True
         #连接数据库
         curdDB = curdDataBaseAdptorByGuessWords()
+
         self.db = curdDB.connectDataBase()
+        if isinstance(self.db, str):
+            self.InsertTipMessage(self.db)
+            return
         self.cursor = curdDB.getCursor(self.db)
         # 更改表格显示数据的来源
         self.tableHideWords()

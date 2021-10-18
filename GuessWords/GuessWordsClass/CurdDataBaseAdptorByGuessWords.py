@@ -2,10 +2,10 @@
 from GuessWords.GuessWordsClass.CurdDataBase import curdDataBase
 class curdDataBaseAdptorByGuessWords:
     config={
-    "host":"47.94.164.171",
+    "host":"localhost",
     "port":3306,
     "user":"root",
-    "password":"2591215997as",
+    "password":"",
     "database":"guesswords",
     "charset":"utf8"
     }
