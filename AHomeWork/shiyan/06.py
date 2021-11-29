@@ -19,20 +19,28 @@
 # for line in fo:
 #     print(line)
 # fo.close()
-
-
-def main():
-    phone={'a':"alpha","b":"bravo","c":"charlie"}
-    while True:
-        try:
-            letter=input("Enter a,b, or c:")
-            print(phone[letter])
-            break
-        except KeyError:
-            print("ssssssss")
-import turtle
-t=turtle.Pen()
-t.reset()
-for x in range(1,38):
-    t.forward(100)
-    t.left(175)
+#
+#
+# def main():
+#     phone={'a':"alpha","b":"bravo","c":"charlie"}
+#     while True:
+#         try:
+#             letter=input("Enter a,b, or c:")
+#             print(phone[letter])
+#             break
+#         except KeyError:
+#             print("ssssssss")
+# import turtle
+# t=turtle.Pen()
+# t.reset()
+# for x in range(1,38):
+#     t.forward(100)
+#     t.left(175)
+f=open('output.txt','r')
+content=f.readline()
+print(f"1.{content}")
+content=f.readline()
+print(f"2.{content}")
+content=f.readline()
+print(f"3.{content}")
+f.close()

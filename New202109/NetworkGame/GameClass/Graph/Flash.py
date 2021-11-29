@@ -1,5 +1,8 @@
 import pygame
 from New202109.NetworkGame.GameClass.Map.Map import Map
+import logging
+
+from New202109.NetworkGame.Config.GlobalValue import GlobalMap
 class Flash:
     screen=None
     img=None
@@ -7,9 +10,12 @@ class Flash:
         self.done=False
         pygame.init()
         self.draw(width,height)
+
+
+
     def draw(self,width,height):
         self.screen=pygame.display.set_mode((width,height))
-        self.img=pygame.image.load(r"1.png")
+        self.img=pygame.image.load(r"./IMG/1.png")
         self.loop()
 
     def loop(self):

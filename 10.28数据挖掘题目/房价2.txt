@@ -1,0 +1,53 @@
+﻿1.使用sklearn调波士顿房价的数据集P74
+from sklearn import datasets
+a=datasets.load_iris()
+from sklearn.datasets import load_iris
+a=load_iris()
+2.查看波士顿房价数据集把取出DATA数据
+features=a.data
+class=a.target
+fig=plt.figure(figsize=(10,8))
+ax1=add_subplot(2,2,1)
+plt.xlabel('class')
+plt.ylabel('')
+ax1.scatter(feature[:,0],class)
+ax2=add_subplot(2,2,2)
+plt.xlabel()
+plt.ylabel()
+ax2.scatter(feature[:,1],class)
+ax3=add_subplot(2,2,3)
+plt.xlabel()
+plt.ylabel()
+ax3.scatter(feature[:,2],class)
+ax4=add_subplot(2,2,4)
+plt.xlabel()
+plt.ylabel()
+ax4.scatter(feature[:,3],class)
+3.合并DATA和target的数据
+np.concatenate((features,prices),axis=1)
+feature=pd.DataFrame(a.data)
+price=pd.DataFrame(a.target)
+fearure['price']=price
+4.把data和target的数据加入列名，英文一个，中文一个（不超过4个汉字）P144
+a=pd.DataFrame(a.data,columns=['花萼长度'，'花萼宽度','花瓣长度','花瓣宽度'])
+a=pd.DataFrame(a.data,columns=['犯罪率'，'花萼宽度','花瓣长度','花瓣宽度'])
+5.画相关性矩阵np.corrcoef(data, rowvar=False)，打印出与最能影响房价的4个特征
+1.得到一个相关性矩阵
+2.取出房价的相关性的那一列
+3.取绝对值给房价相关性的那一列
+4.排序，索引取出来（2,5,10,12）
+5.对应到特征名称a.feature_names[2,5,10,12]
+
+6.画相关性分析图，把每一个特征维度与价格的相关性画出来，因为特征维度是13维的为了好看丢掉相关性最差的那个属性，然后画（3,4）的图
+1.有一维特征是虚拟变量，去掉，data，names
+2.12维的数据
+fig=plt.figure()
+ax1=fig.add_supplot(3,4,1)
+plt.ylabel('price')
+ax1.scatter(feature[0],price,label=name[0])
+ax2=fig.add_supplot(3,4,2)
+plt.ylabel('price')
+ax2.scatter(feature[1],price,label=name[1])
+NOTE：需要把相关性分析画在一张图上，也就是一张有多个子图的图，图必须要有标题、图例和Y轴表示。
+#选做，1.使用循环画图（还是相关性散点图）
+#2.选取二个最能影响房价的特征，使用seaborn绘制二个回归图 P90

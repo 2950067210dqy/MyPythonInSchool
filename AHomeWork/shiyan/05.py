@@ -33,27 +33,27 @@
 #     d[ch]=d.get(ch,0)+1
 # print(d)
 
-# word=input('Enter a word:')
-# firstletter=''
-# secondletter=''
-# flag=True
-# for i in range(0,len(word)-1):
-#     firstletter=word[i]
-#     secondletter=word[i+1]
-#     if firstletter>secondletter:
-#         flag=False
-#         break
-# if flag:
-#     print(1)
-# else:
-#     print(2)
+word=input('Enter a word:')
+firstletter=''
+secondletter=''
+flag=True
+for i in range(0,len(word)-1):
+    firstletter=word[i]
+    secondletter=word[i+1]
+    if firstletter>secondletter:
+        flag=False
+        break
+if flag:
+    print(1)
+else:
+    print(2)
 
 
-def main():
-    print("Enter the person age group ",end=" ")
-    ageGroup=input('(child,minor,adult,or senior):')
-    print("The admission fee is ",determineAdmissionFee(ageGroup),'dollars.')
-def determineAdmissionFee(ageGroup):
-    dict={'child':0,'minor':5,'adult':10,"senior":8}
-    return dict[ageGroup]
-main()
+# def main():
+#     print("Enter the person age group ",end=" ")
+#     ageGroup=input('(child,minor,adult,or senior):')
+#     print("The admission fee is ",determineAdmissionFee(ageGroup),'dollars.')
+# def determineAdmissionFee(ageGroup):
+#     dict={'child':0,'minor':5,'adult':10,"senior":8}
+#     return dict[ageGroup]
+# main()
